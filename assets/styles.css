@@ -34,7 +34,7 @@ input {
 button {
   width: 60%;
   height: 20%;
-  padding: 20px 15px;
+  padding: 15px;
   cursor: pointer;
   outline: none;
   border: none;
@@ -43,44 +43,26 @@ button {
   border-radius: 4px;
   background: #b71717;
 }
-.weather-data {
-  width: 300px;
-  display: flex;
-  flex-wrap: wrap;
-  flex-grow: 1;
-}
 .current-weather {
+  width: 300px;
   color: white;
   display: flex;
-  flex-grow: 1;
+  flex-direction: column;
+  align-items: center;
   border-radius: 5px;
-  padding: 20px 70px 20px 20px;
+  padding: 20px;
   background: #b71717;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
-.current-weather h2 {
-  font-size: 1.7rem;
-}
-.weather-data h4 {
-  margin-top: 1px;
-  font-size: 1rem;
-  font-weight: 500;
-}
-.current-weather .icon {
-  max-width: 100px;
-  margin-top: 10px;
-}
-.current-weather .icon h4 {
-  max-width: 100px;
-  margin-top: 10px;
-}
-.days-forecast {
-  font-size: 1rem;
-  margin: 20px 0;
+.days-forcast h2 {
+  margin-left: 20px;
 }
 .weather-cards {
   display: flex;
   gap: 20px;
+}
+.weather-cards h3 {
+  width: 300px;
 }
 .weather-cards .card {
   list-style: none;
@@ -89,9 +71,4 @@ button {
   border-radius: 5px;
   background: #b71717;
   width: calc(100% / 5);
-}
-.weather-cards .card .icon {
-  max-width: 70px;
-  margin: 5px 0 -12px;
-
 }
