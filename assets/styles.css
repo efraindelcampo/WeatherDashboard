@@ -50,9 +50,9 @@ button {
   flex-direction: column;
   align-items: center;
   border-radius: 5px;
-  padding: 20px;
+  padding: 17px;
   background: #b71717;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 .days-forcast h2 {
   margin-left: 20px;
@@ -65,10 +65,12 @@ button {
   width: 300px;
 }
 .weather-cards .card {
-  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: #e5e2ff;
-  padding: 18px 16px;
+  padding: 17px;
   border-radius: 5px;
   background: #b71717;
-  width: calc(100% / 5);
 }
