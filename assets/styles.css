@@ -59,6 +59,7 @@ button {
 }
 .weather-cards {
   display: flex;
+  justify-content: space-evenly;
   gap: 20px;
 }
 .weather-cards h3 {
