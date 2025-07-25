@@ -5,20 +5,61 @@ const weatherCardsDiv = document.querySelector(".weather-cards");
 
 const API_KEY = "0946c1c99daa825be0df3ab6838f71d2";
 
+/**
+ * Returns the corresponding Google Material Icon name for a given weather condition ID.
+ * @param {number} conditionId - The weather condition ID from the OpenWeatherMap API.
+ * @returns {string} The name of the Material Icon.
+ */
+const getWeatherIcon = (conditionId) => {
+  switch (true) {
+    case (conditionId >= 200 && conditionId <= 232):
+      return "thunderstorm"; // Group 2xx: Thunderstorm ⛈️
+    case (conditionId >= 300 && conditionId <= 321):
+      return "grain";        // Group 3xx: Drizzle 🌦️
+    case (conditionId >= 500 && conditionId <= 531):
+      return "rainy";        // Group 5xx: Rain 🌧️
+    case (conditionId >= 600 && conditionId <= 622):
+      return "ac_unit";      // Group 6xx: Snow ❄️
+    case (conditionId >= 701 && conditionId <= 781):
+      return "foggy";        // Group 7xx: Atmosphere 🌫️
+    case (conditionId === 800):
+      return "wb_sunny";     // Group 800: Clear ☀️
+    case (conditionId === 801):
+      return "partly_cloudy_day"; // Group 80x: Clouds (few) 🌤️
+    case (conditionId >= 802 && conditionId <= 804):
+      return "cloud";        // Group 80x: Clouds (scattered, broken, overcast) ☁️
+    default:
+      return "device_thermostat"; // Default case
+  }
+};
+
 const createWeatherCard = (cityName, weatherItem, index) => {
+  // Create a new Date object and format it
+  const date = new Date(weatherItem.dt_txt);
+  const formattedDate = date.toLocaleDateString("en-US");
+  const tempInFahrenheit = (weatherItem.main.temp - 273.15) * 1.8 + 32;
+  const weatherId = weatherItem.weather[0].id;
+  const iconName = getWeatherIcon(weatherId);
+  const description = weatherItem.weather[0].description;
+  
   if (index === 0) {
     return `<div class="current-weather">
-            <h2>${cityName} (${weatherItem.dt_txt.split(" ")[0]})</h2>
-            <h4>Temp: ${weatherItem.main.temp}°</h4>
+            <h2>${cityName} (${formattedDate})</h2>
+            <h4>Temp: ${tempInFahrenheit.toFixed(2)}°F</h4>
             <h4>Wind: ${weatherItem.wind.speed}mph</h4>
             <h4>Humidty: ${weatherItem.main.humidity}%</h4>
-            </div>`;
+            </div>
+             <div class="icon">
+        <span class="material-symbols-outlined" style="font-size: 6rem;">${iconName}</span>
+        <h4>${description}</h4>
+      </div>`;
   } else {
     return `<li class="card">
-      <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
-      <h4>Temp: ${weatherItem.main.temp}°</h4>
+      <h3>(${formattedDate})</h3>
+            <h4>Temp: ${tempInFahrenheit.toFixed(2)}°F</h4>
       <h4>Wind: ${weatherItem.wind.speed}mph</h4>
       <h4>Humidty: ${weatherItem.main.humidity}%</h4>
+      <span class="material-symbols-outlined">${iconName}</span>
       </li>`;
   }
 };
@@ -40,7 +81,6 @@ const getWeatherDetails = (cityName, lat, lon) => {
       currentWeatherDiv.innerHTML = "";
       weatherCardsDiv.innerHTML = "";
 
-      // console.log(fiveDayForecast);
       fiveDayForecast.forEach((weatherItem, index) => {
         if (index === 0) {
           currentWeatherDiv.insertAdjacentHTML(
@@ -68,7 +108,6 @@ const getCityCoordinates = () => {
   fetch(GEOCODING_API_URL)
     .then((res) => res.json())
     .then((data) => {
-      // console.log(data);
       if (!data.length) return alert(`No coordinates found for city!`);
       const { name, lat, lon } = data[0];
       getWeatherDetails(name, lat, lon);
