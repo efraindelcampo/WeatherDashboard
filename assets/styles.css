@@ -33,8 +33,7 @@ input {
 }
 button {
   width: 60%;
-  height: 20%;
-  padding: 15px;
+  height: 15%;
   cursor: pointer;
   outline: none;
   border: none;
@@ -44,7 +43,7 @@ button {
   background: #b71717;
 }
 .current-weather {
-  width: 300px;
+  width: 230px;
   color: white;
   display: flex;
   flex-direction: column;
@@ -54,11 +53,15 @@ button {
   background: #b71717;
   justify-content: center;
 }
-.days-forcast h2 {
-  margin-left: 20px;
+h2 {
+  margin-left: 30px;
+}
+.days-forecast {
+  display: none;
 }
 .weather-cards {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
   gap: 20px;
 }

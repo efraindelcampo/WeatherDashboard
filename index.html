@@ -6,10 +6,6 @@
     <link rel="stylesheet" href="./assets/styles.css" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
-    <link
-      rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
     />
     <title>Weather Dashboard</title>
@@ -21,8 +17,9 @@
         Enter a city name
         <input
           class="city-input"
+          id="city-input"
           type="text"
-          placeholder="Please enter a city"
+          placeholder="Ex. Fresno"
           autofocus
           autocomplete="on"
         />
@@ -33,11 +30,10 @@
         <h4>Temp: ____°</h4>
         <h4>Wind: ____ mph</h4>
         <h4>Humidty: ____%</h4>
-        <!-- <span class="material-symbols-outlined"> thunderstorm </span> -->
       </div>
     </div>
-    <div class="days-forcast">
-      <h2>5 Day Forecast</h2>
+    <div class="days-forecast">
+      <h2>Full 5 Day Forecast</h2>
       <ul class="weather-cards">
         <li class="card">
           <h3>(____)</h3>

@@ -2,39 +2,34 @@ const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
+const forecastDiv = document.querySelector(".days-forecast");
 
 const API_KEY = "0946c1c99daa825be0df3ab6838f71d2";
 
-/**
- * Returns the corresponding Google Material Icon name for a given weather condition ID.
- * @param {number} conditionId - The weather condition ID from the OpenWeatherMap API.
- * @returns {string} The name of the Material Icon.
- */
 const getWeatherIcon = (conditionId) => {
   switch (true) {
     case conditionId >= 200 && conditionId <= 232:
-      return "thunderstorm"; // Group 2xx: Thunderstorm ⛈️
+      return "⛈️"; // Group 2xx: Thunderstorm
     case conditionId >= 300 && conditionId <= 321:
-      return "grain"; // Group 3xx: Drizzle 🌦️
+      return "🌦️"; // Group 3xx: Drizzle
     case conditionId >= 500 && conditionId <= 531:
-      return "rainy"; // Group 5xx: Rain 🌧️
+      return "🌧️"; // Group 5xx: Rain
     case conditionId >= 600 && conditionId <= 622:
-      return "ac_unit"; // Group 6xx: Snow ❄️
+      return "❄️"; // Group 6xx: Snow
     case conditionId >= 701 && conditionId <= 781:
-      return "foggy"; // Group 7xx: Atmosphere 🌫️
+      return "🌫️"; // Group 7xx: Atmosphere
     case conditionId === 800:
-      return "wb_sunny"; // Group 800: Clear ☀️
+      return "☀️"; // Group 800: Clear
     case conditionId === 801:
-      return "partly_cloudy_day"; // Group 80x: Clouds (few) 🌤️
+      return "🌤️"; // Group 80x: Clouds (few)
     case conditionId >= 802 && conditionId <= 804:
-      return "cloud"; // Group 80x: Clouds (scattered, broken, overcast) ☁️
+      return "☁️"; // Group 80x: Clouds (scattered, broken, overcast)
     default:
       return "device_thermostat"; // Default case
   }
 };
 
 const createWeatherCard = (cityName, weatherItem, index) => {
-  // Create a new Date object and format it
   const date = new Date(weatherItem.dt_txt);
   const formattedDate = date.toLocaleDateString("en-US");
   const tempInFahrenheit = (weatherItem.main.temp - 273.15) * 1.8 + 32;
@@ -49,9 +44,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
             <h4>Temp: ${tempInFahrenheit.toFixed(1)}°F</h4>
             <h4>Wind: ${weatherItem.wind.speed}mph</h4>
             <h4>Humidty: ${weatherItem.main.humidity}%</h4>
-            </div>
-            <div class="icon">
-            <span class="material-symbols-outlined" style="font-size: 6rem;">${iconName}</span>
+            <span class="material-symbols-outlined" style="font-size: 3rem;">${iconName}</span>
             <h4>${description}</h4>
             </div>`;
   } else {
@@ -60,7 +53,7 @@ const createWeatherCard = (cityName, weatherItem, index) => {
             <h4>Temp: ${tempInFahrenheit.toFixed(1)}°F</h4>
             <h4>Wind: ${weatherItem.wind.speed}mph</h4>
             <h4>Humidty: ${weatherItem.main.humidity}%</h4>
-            <span class="material-symbols-outlined">${iconName}</span>
+            <span class="material-symbols-outlined" style="font-size: 3rem;">${iconName}</span>
             <h4>${description}</h4>
             </li>`;
   }
@@ -71,11 +64,11 @@ const getWeatherDetails = (cityName, lat, lon) => {
   fetch(WEATHER_API_URL)
     .then((res) => res.json())
     .then((data) => {
-      const uniqueForcastDays = [];
+      const uniqueForecastDays = [];
       const fiveDayForecast = data.list
         .filter((forecast) => {
           const forecastDate = new Date(forecast.dt_txt).getDate();
-          if (!uniqueForcastDays.includes(forecastDate)) {
+          if (!uniqueForecastDays.includes(forecastDate)) {
             uniqueForecastDays.push(forecastDate); // Add the date to our tracking array
             return true; // Return true to keep this item
           }
@@ -87,6 +80,9 @@ const getWeatherDetails = (cityName, lat, lon) => {
       cityInput.value = "";
       currentWeatherDiv.innerHTML = "";
       weatherCardsDiv.innerHTML = "";
+
+      // ✅ Make the forecast section visible
+      forecastDiv.style.display = "block";
 
       // Create and display weather cards
       fiveDayForecast.forEach((weatherItem, index) => {
