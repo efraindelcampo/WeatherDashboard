@@ -1,5 +1,5 @@
 body {
-  background: #ffe2e2;
+  background: #fff5f5;
 }
 h1 {
   padding: 17px;
@@ -8,6 +8,7 @@ h1 {
   color: white;
   background: #b71717;
   border-radius: 5px;
+  box-shadow: black 0 0 10px;
 }
 h3 {
   font-size: 1.5rem;
@@ -17,6 +18,13 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.h3-text {
+  width: 80%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 .container {
   display: flex;
@@ -33,7 +41,7 @@ input {
 }
 button {
   width: 60%;
-  height: 15%;
+  height: 40px;
   cursor: pointer;
   outline: none;
   border: none;
@@ -49,12 +57,13 @@ button {
   flex-direction: column;
   align-items: center;
   border-radius: 5px;
-  padding: 17px;
+  /* padding: 7px; */
   background: #b71717;
   justify-content: center;
+  box-shadow: black 0 0 10px;
 }
 h2 {
-  margin-left: 30px;
+  text-align: center;
 }
 .days-forecast {
   display: none;
@@ -66,15 +75,16 @@ h2 {
   gap: 20px;
 }
 .weather-cards h3 {
-  width: 300px;
+  width: 250px;
 }
 .weather-cards .card {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #e5e2ff;
-  padding: 17px;
+  color: white;
+  padding: 7px;
   border-radius: 5px;
   background: #b71717;
+  box-shadow: black 0 0 10px;
 }
