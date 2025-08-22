@@ -31,7 +31,6 @@ const getWeatherIcon = (conditionId) => {
 const createWeatherCard = (locationName, weatherItem, index) => {
   const date = new Date(weatherItem.dt_txt);
   const formattedDate = date.toLocaleDateString("en-US");
-  const tempInFahrenheit = (weatherItem.main.temp - 273.15) * 1.8 + 32;
   const weatherId = weatherItem.weather[0].id;
   const iconName = getWeatherIcon(weatherId);
   const description = weatherItem.weather[0].description;
@@ -39,21 +38,24 @@ const createWeatherCard = (locationName, weatherItem, index) => {
   if (index === 0) {
     // Main weather card for today
     return `<div class="current-weather">
-            <h2>${locationName}<br>(${formattedDate})</h2>
-            <h4>Temp: ${tempInFahrenheit.toFixed(1)}°F</h4>
-            <h4>Wind: ${weatherItem.wind.speed}mph</h4>
-            <h4>Humidty: ${weatherItem.main.humidity}%</h4>
+            <h2>${locationName}<br>${formattedDate}</h2>
             <span class="material-symbols-outlined" style="font-size: 3rem;">${iconName}</span>
             <h4>${description}</h4>
+            <h4>Temp: ${((weatherItem.main.feels_like - 273.15) * 1.8 + 32).toFixed(1)}°F / ${(weatherItem.main.feels_like - 273.15).toFixed(1)}°C</h4>
+            <h4>Highs: ${((weatherItem.main.temp_max - 273.15) * 1.8 + 32).toFixed(1)}°F / ${(weatherItem.main.temp_max - 273.15).toFixed(1)}°C</h4>
+            <h4>Lows: ${((weatherItem.main.temp_min - 273.15) * 1.8 + 32).toFixed(1)}°F / ${(weatherItem.main.temp_min - 273.15).toFixed(1)}°C</h4>
+            <h4>Wind: ${weatherItem.wind.speed}mph</h4>
+            <h4>Humidty: ${weatherItem.main.humidity}%</h4>
             </div>`;
   } else {
     return `<li class="card">
-            <h3>${locationName} (${formattedDate})</h3>
-            <h4>Temp: ${tempInFahrenheit.toFixed(1)}°F</h4>
-            <h4>Wind: ${weatherItem.wind.speed}mph</h4>
-            <h4>Humidty: ${weatherItem.main.humidity}%</h4>
+            <h3>${locationName} ${formattedDate}</h3>
             <span class="material-symbols-outlined" style="font-size: 3rem;">${iconName}</span>
             <h4>${description}</h4>
+            <h4>Highs: ${((weatherItem.main.temp_max - 273.15) * 1.8 + 32).toFixed(1)}°F / ${(weatherItem.main.temp_max - 273.15).toFixed(1)}°C</h4>
+            <h4>Lows: ${((weatherItem.main.temp_min - 273.15) * 1.8 + 32).toFixed(1)}°F / ${(weatherItem.main.temp_min - 273.15).toFixed(1)}°C</h4>
+            <h4>Wind: ${weatherItem.wind.speed}mph</h4>
+            <h4>Humidty: ${weatherItem.main.humidity}%</h4>
             </li>`;
   }
 };

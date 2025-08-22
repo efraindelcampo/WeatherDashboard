@@ -18,6 +18,8 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  gap: 5px;
 }
 .h3-text {
   width: 80%;
@@ -57,10 +59,9 @@ button {
   flex-direction: column;
   align-items: center;
   border-radius: 5px;
-  /* padding: 7px; */
   background: #b71717;
   justify-content: center;
-  box-shadow: black 0 0 10px;
+  box-shadow: black 0 0 5px;
 }
 h2 {
   text-align: center;
@@ -73,6 +74,7 @@ h2 {
   flex-wrap: wrap;
   justify-content: space-evenly;
   gap: 20px;
+  padding: 0;
 }
 .weather-cards h3 {
   width: 250px;
@@ -81,6 +83,7 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
   align-items: center;
   color: white;
   padding: 7px;
