@@ -5,10 +5,8 @@ const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 const daysForecastDiv = document.querySelector(".days-forecast");
 
-// Use your actual API Key
 const API_KEY = "0946c1c99daa825be0df3ab6838f71d2";
 
-// --- Helper Functions (No changes here) ---
 const getWeatherIcon = (conditionId) => {
   switch (true) {
     case conditionId >= 200 && conditionId <= 232:
@@ -29,6 +27,7 @@ const getWeatherIcon = (conditionId) => {
       return "❓";
   }
 };
+
 const createCurrentWeatherCard = (
   locationName,
   currentWeather,
@@ -53,6 +52,7 @@ const createCurrentWeatherCard = (
                 <h6>Humidity: ${currentWeather.main.humidity}%</h6>
             </div>`;
 };
+
 const createForecastCard = (cityName, weatherItem, dailyMinMax) => {
   const date = new Date(weatherItem.dt * 1000);
   const weekday = date.toLocaleDateString("en-US");
@@ -77,10 +77,9 @@ const createForecastCard = (cityName, weatherItem, dailyMinMax) => {
             </li>`;
 };
 
-// --- Main Weather Fetching Logic (No changes here) ---
 const getWeatherDetails = (cityName, lat, lon, state, country) => {
-  autocompleteResultsDiv.innerHTML = ""; // Clear results
-  cityInput.value = [cityName, state].filter(Boolean).join(", "); // Update input field
+  autocompleteResultsDiv.innerHTML = "";
+  cityInput.value = [cityName, state].filter(Boolean).join(", ");
 
   const CURRENT_WEATHER_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
   const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
@@ -88,7 +87,6 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
   Promise.all([fetch(CURRENT_WEATHER_URL), fetch(FORECAST_URL)])
     .then((responses) => Promise.all(responses.map((res) => res.json())))
     .then(([currentWeather, forecastData]) => {
-      // Calculate daily highs and lows from forecast data
       const dailyMinMaxTemps = {};
       forecastData.list.forEach((forecast) => {
         const date = forecast.dt_txt.split(" ")[0];
@@ -109,7 +107,6 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
         }
       });
 
-      // Combine all daily data into one clean array
       const dailyData = Object.keys(dailyMinMaxTemps)
         .map((date) => {
           return {
@@ -153,8 +150,6 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
       alert("An error occurred while fetching the weather data!");
     });
 };
-
-// --- ✨ NEW: Autocomplete and Debouncing Logic ✨ ---
 
 // Clears the autocomplete suggestions
 const clearSuggestions = () => {
@@ -230,7 +225,7 @@ cityInput.addEventListener("input", (e) => {
   debouncedGetCitySuggestions(e.target.value);
 });
 
-// Bonus: Close dropdown if user clicks elsewhere on the page
+// Close dropdown if user clicks elsewhere on the page
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".search-container")) {
     clearSuggestions();
