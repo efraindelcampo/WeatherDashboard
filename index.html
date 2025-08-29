@@ -13,23 +13,22 @@
   <body>
     <h1>Weather Dashboard</h1>
     <div class="container">
-      <h3>
-        Enter a city name
-        <input
-          class="city-input"
-          id="city-input"
-          type="text"
-          placeholder="ex. Fresno"
-          autofocus
-          autocomplete="on"
-        />
-        <button class="search-btn">Search</button>
-      </h3>
-      <div class="current-weather">
-        <h2>___ (___)</h2>
-        <h6>Temp: ____°</h6>
-        <h6>Wind: ____ mph</h6>
-        <h6>Humidty: ____%</h6>
+      <div class="search-container">
+        <h3>Enter a city name</h3>
+        <div class="input-wrapper">
+          <input
+            class="city-input"
+            id="city-input"
+            type="text"
+            placeholder="ex. Santa Monica"
+            autofocus
+            autocomplete="off"
+          />
+          <div id="autocomplete-results"></div>
+        </div>
+      </div>
+      <div class="weather-details">
+        <div class="current-weather"></div>
       </div>
     </div>
     <div class="days-forecast">

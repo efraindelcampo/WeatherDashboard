@@ -1,6 +1,7 @@
 body {
   background: #fff5f5;
 }
+
 h1 {
   padding: 17px;
   text-align: center;
@@ -10,10 +11,11 @@ h1 {
   border-radius: 5px;
   box-shadow: black 0 0 10px;
 }
+
 h3 {
   font-size: 1.5rem;
   margin: 5px;
-  /* width: 200px; */
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,6 +23,7 @@ h3 {
   text-align: center;
   gap: 5px;
 }
+
 .h3-text {
   width: 80%;
   justify-content: center;
@@ -28,19 +31,22 @@ h3 {
   display: flex;
   flex-wrap: wrap;
 }
+
 .container {
   display: flex;
   justify-content: center;
 }
+
 input {
   margin: 25px;
-  width: 60%;
+  width: 80%;
   height: 40px;
   outline: none;
   font-size: 1rem;
   border-radius: 4px;
   border: 1px solid gray;
 }
+
 button {
   width: 60%;
   height: 40px;
@@ -52,6 +58,7 @@ button {
   border-radius: 4px;
   background: #b71717;
 }
+
 .current-weather {
   width: 230px;
   color: white;
@@ -63,17 +70,21 @@ button {
   justify-content: center;
   box-shadow: black 0 0 5px;
 }
+
 h2 {
   text-align: center;
   margin: 10px;
 }
-h6{
+
+h6 {
   margin: 10px;
   font-size: 1rem;
 }
+
 .days-forecast {
   display: none;
 }
+
 .weather-cards {
   display: flex;
   flex-wrap: wrap;
@@ -81,9 +92,11 @@ h6{
   gap: 20px;
   padding: 0;
 }
+
 .weather-cards h3 {
   width: 250px;
 }
+
 .weather-cards .card {
   display: flex;
   flex-direction: column;
@@ -95,4 +108,47 @@ h6{
   border-radius: 5px;
   background: #b71717;
   box-shadow: black 0 0 10px;
+}
+
+.search-container {
+  position: relative;
+  width: 80%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-wrapper {
+  width: 100%;
+}
+
+#autocomplete-results {
+  position: absolute;
+  top: 107px;
+  width: 80%;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 250px;
+  overflow-y: auto;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background-color: #f5f5f5;
 }
