@@ -4,6 +4,7 @@ const autocompleteResultsDiv = document.querySelector("#autocomplete-results");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 const daysForecastDiv = document.querySelector(".days-forecast");
+let activeSuggestionIndex = -1;
 
 const API_KEY = "0946c1c99daa825be0df3ab6838f71d2";
 
@@ -39,15 +40,23 @@ const createCurrentWeatherCard = (
   const description = currentWeather.weather[0].description;
   const formattedDesc =
     description.charAt(0).toUpperCase() + description.slice(1);
+  const fahrenheitToCelsius = (fahrenheit) => {
+    return ((fahrenheit - 32) * 5) / 9;
+  };
+  const currentTempC = fahrenheitToCelsius(currentWeather.main.temp).toFixed(0);
+  const highTempC = fahrenheitToCelsius(todayMinMax.max).toFixed(0);
+  const lowTempC = fahrenheitToCelsius(todayMinMax.min).toFixed(0);
 
   return `<div class="current-weather">
                 <h2>${locationName}</h2>
                 <h2>${formattedDate}</h2>
                 <h6>${formattedDesc}</h6>
                 <span style="font-size: 2rem">${icon}</span>
-                <h6>${currentWeather.main.temp.toFixed(0)}°F</h6>
-                <h6>High: ${todayMinMax.max.toFixed(0)}°F</h6>
-                <h6>Low: ${todayMinMax.min.toFixed(0)}°F</h6>
+                <h6>${currentWeather.main.temp.toFixed(
+                  0
+                )}°F / ${currentTempC}°C</h6>
+                <h6>High: ${todayMinMax.max.toFixed(0)}°F / ${highTempC}°C</h6>
+                <h6>Low: ${todayMinMax.min.toFixed(0)}°F / ${lowTempC}°C</h6>
                 <h6>Wind: ${currentWeather.wind.speed.toFixed(0)} mph</h6>
                 <h6>Humidity: ${currentWeather.main.humidity}%</h6>
             </div>`;
@@ -58,20 +67,26 @@ const createForecastCard = (cityName, weatherItem, dailyMinMax) => {
   const weekday = date.toLocaleDateString("en-US");
   const icon = getWeatherIcon(weatherItem.weather[0].id);
   const description = weatherItem.weather[0].description;
-  const avgTemp = ((dailyMinMax.max + dailyMinMax.min) / 2).toFixed(0);
+  const avgTempF = ((dailyMinMax.max + dailyMinMax.min) / 2).toFixed(0);
   const windSpeed = weatherItem.wind.speed.toFixed(0);
   const humidity = weatherItem.main.humidity;
   const formattedDesc =
     description.charAt(0).toUpperCase() + description.slice(1);
+  const fahrenheitToCelsius = (fahrenheit) => {
+    return ((fahrenheit - 32) * 5) / 9;
+  };
+  const avgTempC = fahrenheitToCelsius(avgTempF).toFixed(0);
+  const highTempC = fahrenheitToCelsius(dailyMinMax.max).toFixed(0);
+  const lowTempC = fahrenheitToCelsius(dailyMinMax.min).toFixed(0);
 
   return `<li class="card">
                 <h3>${cityName}</h3>
                 <h3>${weekday}</h3>
                 <span style="font-size: 2rem;">${icon}</span>
                 <h6>${formattedDesc}</h6>
-                <h6>Avg: ${avgTemp}°F</h6> 
-                <h6>High: ${dailyMinMax.max.toFixed(0)}°F</h6>
-                <h6>Low: ${dailyMinMax.min.toFixed(0)}°F</h6>
+                <h6>Avg: ${avgTempF}°F / ${avgTempC}°C</h6> 
+                <h6>High: ${dailyMinMax.max.toFixed(0)}°F / ${highTempC}°C</h6>
+                <h6>Low: ${dailyMinMax.min.toFixed(0)}°F / ${lowTempC}°C</h6>
                 <h6>Wind: ${windSpeed} mph</h6>
                 <h6>Humidity: ${humidity}%</h6>
             </li>`;
@@ -159,6 +174,7 @@ const clearSuggestions = () => {
 // Displays the city suggestions in the dropdown
 const displaySuggestions = (data) => {
   clearSuggestions();
+  activeSuggestionIndex = -1;
   data.forEach((city) => {
     const suggestionItem = document.createElement("div");
     suggestionItem.classList.add("autocomplete-item");
@@ -218,7 +234,37 @@ const debounce = (func, delay) => {
 // Create a debounced version of our API call function
 const debouncedGetCitySuggestions = debounce(getCitySuggestions, 300);
 
-// --- Event Listeners ---
+const updateActiveSuggestion = (items) => {
+  items.forEach((item) => item.classList.remove("autocomplete-active"));
+
+  if (activeSuggestionIndex > -1) {
+    items[activeSuggestionIndex].classList.add("autocomplete-active");
+  }
+};
+
+cityInput.addEventListener("keydown", (e) => {
+  const items = autocompleteResultsDiv.querySelectorAll(".autocomplete-item");
+  if (!items.length) return;
+
+  if (e.key === "ArrowDown") {
+    activeSuggestionIndex++;
+    if (activeSuggestionIndex >= items.length) {
+      activeSuggestionIndex = 0;
+    }
+    updateActiveSuggestion(items);
+  } else if (e.key === "ArrowUp") {
+    activeSuggestionIndex--;
+    if (activeSuggestionIndex < 0) {
+      activeSuggestionIndex = items.length - 1;
+    }
+    updateActiveSuggestion(items);
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    if (activeSuggestionIndex > -1) {
+      items[activeSuggestionIndex].click();
+    }
+  }
+});
 
 // Listen for input in the city search box
 cityInput.addEventListener("input", (e) => {
