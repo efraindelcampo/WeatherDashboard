@@ -1,6 +1,7 @@
 // DOM Element Selectors
 const cityInput = document.querySelector(".city-input");
 const autocompleteResultsDiv = document.querySelector("#autocomplete-results");
+const weatherDetails = document.querySelector(".weather-details");
 const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 const daysForecastDiv = document.querySelector(".days-forecast");
@@ -140,6 +141,7 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
       cityInput.value = "";
       currentWeatherDiv.innerHTML = "";
       weatherCardsDiv.innerHTML = "";
+      weatherDetails.style.display = "block";
       daysForecastDiv.style.display = "block";
 
       const fullLocationName = [cityName, state, country]
