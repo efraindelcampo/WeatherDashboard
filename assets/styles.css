@@ -24,14 +24,6 @@ h3 {
   gap: 5px;
 }
 
-.h3-text {
-  width: 80%;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .container {
   display: flex;
   justify-content: center;
