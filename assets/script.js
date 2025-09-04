@@ -135,7 +135,7 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
               ) || forecastData.list.find((f) => f.dt_txt.startsWith(date)),
           };
         })
-        .slice(0, 5);
+        .slice(0, 4);
 
       // Clear previous data and display the new cards
       cityInput.value = "";
@@ -156,7 +156,7 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
       );
 
       // Display the next 4-day forecast cards
-      dailyData.slice(1).forEach((day) => {
+      dailyData.forEach((day) => {
         weatherCardsDiv.insertAdjacentHTML(
           "beforeend",
           createForecastCard(cityName, day.weather, day.minMax)
@@ -177,7 +177,21 @@ const clearSuggestions = () => {
 const displaySuggestions = (data) => {
   clearSuggestions();
   activeSuggestionIndex = -1;
-  data.forEach((city) => {
+
+  const seen = new Set();
+  const uniqueCities = data.filter(city => {
+    const identifier = [city.name, city.state, city.country]
+      .filter(Boolean)
+      .join(", ");
+    if (seen.has(identifier)) {
+      return false;
+    } else {
+      seen.add(identifier);
+      return true;
+    }
+  });
+
+  uniqueCities.forEach((city) => {
     const suggestionItem = document.createElement("div");
     suggestionItem.classList.add("autocomplete-item");
     suggestionItem.textContent = [city.name, city.state, city.country]
