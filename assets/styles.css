@@ -29,6 +29,12 @@ h3 {
   justify-content: center;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 input {
   margin-top: 10px;
   width: 80%;
@@ -132,4 +138,25 @@ h6 {
 
 .autocomplete-active {
   background-color: #e9e9e9;
+}
+
+/* Add to styles.css */
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #b71717;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  display: none; /* Initially hidden */
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.show-loading {
+  display: block; /* Class to show the spinner */
 }

@@ -11,6 +11,7 @@ const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 // Selects the container for the 5-day forecast section, initially hidden.
 const daysForecastDiv = document.querySelector(".days-forecast");
+const loadingSpinner = document.querySelector(".loading-spinner");
 
 // --- Helper Functions ---
 // Converts a temperature from Fahrenheit to Celsius.
@@ -20,6 +21,38 @@ const fahrenheitToCelsius = (fahrenheit) => {
 // Capitalizes the first letter of a given string.
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+const processForecastData = (list) => {
+  const dailyMinMaxTemps = {};
+  list.forEach((forecast) => {
+    const date = forecast.dt_txt.split(" ")[0];
+    dailyMinMaxTemps[date] = dailyMinMaxTemps[date] || {
+      min: Infinity,
+      max: -Infinity,
+    };
+    dailyMinMaxTemps[date].min = Math.min(
+      dailyMinMaxTemps[date].min,
+      forecast.main.temp_min
+    );
+    dailyMinMaxTemps[date].max = Math.max(
+      dailyMinMaxTemps[date].max,
+      forecast.main.temp_max
+    );
+  });
+
+  return Object.keys(dailyMinMaxTemps)
+    .map((date) => {
+      return {
+        date: date,
+        minMax: dailyMinMaxTemps[date],
+        weather:
+          list.find(
+            (f) => f.dt_txt.startsWith(date) && f.dt_txt.includes("12:00:00")
+          ) || list.find((f) => f.dt_txt.startsWith(date)),
+      };
+    })
+    .slice(0, 4);
 };
 
 // --- Global Variables ---
@@ -127,47 +160,14 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
   const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
 
   // Fetch both current and forecast weather data concurrently.
-  Promise.all([fetch(CURRENT_WEATHER_URL), fetch(FORECAST_URL)])
-    .then((responses) => Promise.all(responses.map((res) => res.json()))) // Parse JSON for both responses.
-    .then(([currentWeather, forecastData]) => {
-      // Process forecast data to find the min/max temperature for each day.
-      const dailyMinMaxTemps = {};
-      forecastData.list.forEach((forecast) => {
-        const date = forecast.dt_txt.split(" ")[0]; // Get the date part of the timestamp.
-        if (!dailyMinMaxTemps[date]) {
-          // If first time seeing this date, initialize it.
-          dailyMinMaxTemps[date] = {
-            min: forecast.main.temp_min,
-            max: forecast.main.temp_max,
-          };
-        } else {
-          // Otherwise, update the min and max temperatures for that day.
-          dailyMinMaxTemps[date].min = Math.min(
-            dailyMinMaxTemps[date].min,
-            forecast.main.temp_min
-          );
-          dailyMinMaxTemps[date].max = Math.max(
-            dailyMinMaxTemps[date].max,
-            forecast.main.temp_max
-          );
-        }
-      });
+  loadingSpinner.classList.add("show-loading");
 
-      // Create an array of daily data, including a representative weather snapshot (around noon).
-      const dailyData = Object.keys(dailyMinMaxTemps)
-        .map((date) => {
-          return {
-            date: date,
-            minMax: dailyMinMaxTemps[date],
-            // Find a weather forecast entry for this day, preferably at noon.
-            weather:
-              forecastData.list.find(
-                (f) =>
-                  f.dt_txt.startsWith(date) && f.dt_txt.includes("12:00:00")
-              ) || forecastData.list.find((f) => f.dt_txt.startsWith(date)),
-          };
-        })
-        .slice(0, 4); // Get data for the next 4 days.
+  Promise.all([fetch(CURRENT_WEATHER_URL), fetch(FORECAST_URL)])
+    .then((responses) => Promise.all(responses.map((res) => res.json())))
+    .then(([currentWeather, forecastData]) => {
+      loadingSpinner.classList.remove("show-loading");
+
+      const dailyData = processForecastData(forecastData.list);
 
       // Clear previous weather data from the UI.
       cityInput.value = "";
@@ -198,7 +198,8 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
       });
     })
     .catch(() => {
-      // Handle errors during the API fetch.
+      loadingSpinner.classList.remove("show-loading");
+       // Handle errors during the API fetch.
       alert("An error occurred while fetching the weather data!");
     });
 };

@@ -10,21 +10,23 @@
     <h1>Weather Dashboard</h1>
     <div class="container">
       <div class="search-container">
-        <h3>Enter a city name</h3>
-        <input
-          class="city-input"
-          id="city-input"
-          type="text"
-          placeholder="ex. Fresno"
-          autofocus
-          autocomplete="off"
-        />
-        <div id="autocomplete-results"></div>
+        <label for="city-input"> <h3>Enter a city name</h3></label>
+        <form>
+          <input
+            class="city-input"
+            id="city-input"
+            type="text"
+            placeholder="ex. Fresno"
+            autofocus
+          />
+          <div id="autocomplete-results"></div>
+        </form>
       </div>
       <div class="weather-details">
         <div class="current-weather"></div>
       </div>
     </div>
+    <div class="loading-spinner"></div> </div>
     <div class="days-forecast">
       <h2>Full 5 Day Forecast</h2>
       <ul class="weather-cards"></ul>
