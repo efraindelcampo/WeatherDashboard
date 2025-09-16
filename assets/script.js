@@ -11,6 +11,7 @@ const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 // Selects the container for the 5-day forecast section, initially hidden.
 const daysForecastDiv = document.querySelector(".days-forecast");
+// Selects the div that will display the loading spinner.
 const loadingSpinner = document.querySelector(".loading-spinner");
 
 // --- Helper Functions ---
@@ -22,25 +23,37 @@ const fahrenheitToCelsius = (fahrenheit) => {
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
-
 // Process forecast data
 const processForecastData = (list) => {
+  // Initialize an empty object to store daily min and max temperatures
   const dailyMinMaxTemps = {};
+  // Iterate over each forecast entry in the list
   list.forEach((forecast) => {
+    // Extract the date part (YYYY-MM-DD) from the forecast's timestamp
     const date = forecast.dt_txt.split(" ")[0];
+    // If the date is not yet a key in the dailyMinMaxTemps object, initialize it
     dailyMinMaxTemps[date] = dailyMinMaxTemps[date] || { min: Infinity, max: -Infinity };
+    // Update the minimum temperature for the current date
     dailyMinMaxTemps[date].min = Math.min(dailyMinMaxTemps[date].min, forecast.main.temp_min);
+    // Update the maximum temperature for the current date
     dailyMinMaxTemps[date].max = Math.max(dailyMinMaxTemps[date].max, forecast.main.temp_max);
   });
 
+  // Convert the dailyMinMaxTemps object into an array of daily summary objects
   return Object.keys(dailyMinMaxTemps).map((date) => {
+    // Return a new object for each date
     return {
+      // Set the date
       date: date,
+      // Set the min and max temperatures for that day
       minMax: dailyMinMaxTemps[date],
+      // Find a representative weather entry for the day
       weather: list.find(
+        // First, try to find the forecast for noon (12:00:00) on that date
         (f) => f.dt_txt.startsWith(date) && f.dt_txt.includes("12:00:00")
-      ) || list.find((f) => f.dt_txt.startsWith(date)),
+      ) || list.find((f) => f.dt_txt.startsWith(date)), // If noon is not found, get the first forecast entry for the day
     };
+  // Limit the result to the first four days
   }).slice(0, 4);
 };
 
@@ -148,47 +161,69 @@ const getWeatherDetails = (cityName, lat, lon, state, country) => {
   const CURRENT_WEATHER_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
   const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
 
-  // Fetch both current and forecast weather data concurrently.
   loadingSpinner.classList.add("show-loading");
+  
+// This function gets the weather details for a specific city.
+const getWeatherDetails = (cityName, lat, lon, state, country) => {
+  // Clear any previous autocomplete suggestions from the UI.
+  autocompleteResultsDiv.innerHTML = "";
+  // Update the city input field with the selected city and state.
+  cityInput.value = [cityName, state].filter(Boolean).join(", ");
 
+  // Define the URL for fetching current weather data from the API.
+  const CURRENT_WEATHER_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
+  // Define the URL for fetching the 5-day forecast data from the API.
+  const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
+
+  // Display a loading spinner to provide user feedback.
+  loadingSpinner.classList.add("show-loading");
+  
+  // Use Promise.all to fetch both current weather and forecast data at the same time for efficiency.
   Promise.all([fetch(CURRENT_WEATHER_URL), fetch(FORECAST_URL)])
+    // Once both fetches are complete, parse the JSON data from each response.
     .then((responses) => Promise.all(responses.map((res) => res.json())))
+    // Process the JSON data from both API calls.
     .then(([currentWeather, forecastData]) => {
+      // Hide the loading spinner after the data is received.
       loadingSpinner.classList.remove("show-loading");
 
+      // Process the forecast list to get daily min/max temperatures and a representative weather entry for each day.
       const dailyData = processForecastData(forecastData.list);
 
-      // Clear previous weather data from the UI.
+      // Clear the city input and any previously displayed weather data.
       cityInput.value = "";
       currentWeatherDiv.innerHTML = "";
       weatherCardsDiv.innerHTML = "";
-      // Make the weather details sections visible.
+      // Make the weather details sections visible to the user.
       weatherDetails.style.display = "block";
       daysForecastDiv.style.display = "block";
 
-      // Format the full location name for display.
+      // Create a formatted string for the full location name.
       const fullLocationName = [cityName, state, country]
         .filter(Boolean)
         .join(", ");
 
-      // Create and display the main current weather card.
+      // Generate and insert the HTML for the current weather card into the UI.
       currentWeatherDiv.innerHTML = createCurrentWeatherCard(
         fullLocationName,
         currentWeather,
         dailyData[0].minMax
       );
 
-      // Create and display the forecast cards for the next 4 days.
+      // Iterate through the processed daily forecast data.
       dailyData.forEach((day) => {
+        // Generate and append the HTML for each forecast card to the UI.
         weatherCardsDiv.insertAdjacentHTML(
           "beforeend",
           createForecastCard(cityName, day.weather, day.minMax)
         );
       });
     })
+    // Catch any errors that might occur during the fetch operations.
     .catch(() => {
+      // Hide the loading spinner in case of an error.
       loadingSpinner.classList.remove("show-loading");
-       // Handle errors during the API fetch.
+      // Display an alert to the user notifying them of the error.
       alert("An error occurred while fetching the weather data!");
     });
 };
@@ -198,35 +233,47 @@ const clearSuggestions = () => {
   autocompleteResultsDiv.innerHTML = "";
 };
 
-// Displays the city suggestions in the dropdown.
+// This function displays a list of city suggestions for the user.
 const displaySuggestions = (data) => {
+  // Clear any existing suggestions from the previous search.
   clearSuggestions();
-  activeSuggestionIndex = -1; // Reset active suggestion index.
+  // Reset the index of the currently active (highlighted) suggestion.
+  activeSuggestionIndex = -1;
 
-  // Use a Set to filter out duplicate city/state/country combinations.
+  // Use a Set to track and remove duplicate city entries.
   const seen = new Set();
+  // Filter the incoming data to keep only unique city suggestions.
   const uniqueCities = data.filter((city) => {
+    // Create a unique identifier string for each city (e.g., "New York, NY, US").
     const identifier = [city.name, city.state, city.country]
       .filter(Boolean)
       .join(", ");
+    // Check if this identifier has already been seen.
     if (seen.has(identifier)) {
-      return false; // If we've seen this city, filter it out.
+      // If it's a duplicate, return false to filter it out.
+      return false;
     } else {
-      seen.add(identifier); // Otherwise, add it to our set and keep it.
+      // If it's a new city, add its identifier to the set.
+      seen.add(identifier);
+      // Return true to keep this city in the uniqueCities array.
       return true;
     }
   });
 
-  // Create a div for each unique city suggestion.
+  // Iterate over each unique city to create a suggestion item for it.
   uniqueCities.forEach((city) => {
+    // Create a new div element for the suggestion item.
     const suggestionItem = document.createElement("div");
+    // Add the "autocomplete-item" class for styling.
     suggestionItem.classList.add("autocomplete-item");
+    // Set the text content of the suggestion item to the formatted city name.
     suggestionItem.textContent = [city.name, city.state, city.country]
       .filter(Boolean)
       .join(", ");
 
-    // Add a click event listener to fetch weather when a suggestion is chosen.
+    // Add a click event listener to the suggestion item.
     suggestionItem.addEventListener("click", () => {
+      // When clicked, call the getWeatherDetails function with the city's data.
       getWeatherDetails(
         city.name,
         city.lat,
@@ -236,33 +283,43 @@ const displaySuggestions = (data) => {
       );
     });
 
+    // Append the newly created suggestion item to the autocomplete results container.
     autocompleteResultsDiv.appendChild(suggestionItem);
   });
 };
 
-// Fetches city suggestions from the Geocoding API based on user input.
+// This function fetches city suggestions based on a user's input query.
 const getCitySuggestions = (query) => {
-  // Don't search if the query is too short.
+  // Check if the input query is too short (less than 3 characters).
   if (query.length < 3) {
+    // If it is, clear any existing suggestions.
     clearSuggestions();
+    // Exit the function.
     return;
   }
-  // API URL for geocoding (finding lat/lon from city name).
+  // Construct the API URL for the OpenWeatherMap geocoding service.
   const GEOCODING_API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`;
 
+  // Start a fetch request to the geocoding API.
   fetch(GEOCODING_API_URL)
+    // When the response is received, parse it as JSON.
     .then((res) => res.json())
+    // Process the JSON data received from the API.
     .then((data) => {
-      // If the API returns any cities, display them. Otherwise, clear suggestions.
+      // Check if the data array contains any city results.
       if (data.length) {
+        // If there are results, call displaySuggestions to show them to the user.
         displaySuggestions(data);
       } else {
+        // If no results are found, clear any existing suggestions.
         clearSuggestions();
       }
     })
+    // Catch any errors that occur during the fetch operation.
     .catch(() => {
-      // Log errors and clear suggestions if the fetch fails.
+      // Log an error message to the console for debugging purposes.
       console.error("Error fetching city suggestions.");
+      // Clear suggestions from the UI in case of an error.
       clearSuggestions();
     });
 };
