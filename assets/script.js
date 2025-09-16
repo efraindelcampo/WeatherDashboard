@@ -393,4 +393,4 @@ document.addEventListener("click", (e) => {
   if (!e.target.closest(".search-container")) {
     clearSuggestions();
   }
-});
+})};
