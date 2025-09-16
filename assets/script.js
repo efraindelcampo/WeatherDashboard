@@ -23,36 +23,25 @@ const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+// Process forecast data
 const processForecastData = (list) => {
   const dailyMinMaxTemps = {};
   list.forEach((forecast) => {
     const date = forecast.dt_txt.split(" ")[0];
-    dailyMinMaxTemps[date] = dailyMinMaxTemps[date] || {
-      min: Infinity,
-      max: -Infinity,
-    };
-    dailyMinMaxTemps[date].min = Math.min(
-      dailyMinMaxTemps[date].min,
-      forecast.main.temp_min
-    );
-    dailyMinMaxTemps[date].max = Math.max(
-      dailyMinMaxTemps[date].max,
-      forecast.main.temp_max
-    );
+    dailyMinMaxTemps[date] = dailyMinMaxTemps[date] || { min: Infinity, max: -Infinity };
+    dailyMinMaxTemps[date].min = Math.min(dailyMinMaxTemps[date].min, forecast.main.temp_min);
+    dailyMinMaxTemps[date].max = Math.max(dailyMinMaxTemps[date].max, forecast.main.temp_max);
   });
 
-  return Object.keys(dailyMinMaxTemps)
-    .map((date) => {
-      return {
-        date: date,
-        minMax: dailyMinMaxTemps[date],
-        weather:
-          list.find(
-            (f) => f.dt_txt.startsWith(date) && f.dt_txt.includes("12:00:00")
-          ) || list.find((f) => f.dt_txt.startsWith(date)),
-      };
-    })
-    .slice(0, 4);
+  return Object.keys(dailyMinMaxTemps).map((date) => {
+    return {
+      date: date,
+      minMax: dailyMinMaxTemps[date],
+      weather: list.find(
+        (f) => f.dt_txt.startsWith(date) && f.dt_txt.includes("12:00:00")
+      ) || list.find((f) => f.dt_txt.startsWith(date)),
+    };
+  }).slice(0, 4);
 };
 
 // --- Global Variables ---
