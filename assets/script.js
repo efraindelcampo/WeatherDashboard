@@ -154,17 +154,6 @@ const createForecastCard = (cityName, weatherItem, dailyMinMax) => {
 
 // Fetches weather data from the API and updates the DOM.
 const getWeatherDetails = (cityName, lat, lon, state, country) => {
-  autocompleteResultsDiv.innerHTML = ""; // Clear autocomplete suggestions.
-  cityInput.value = [cityName, state].filter(Boolean).join(", "); // Update input field to show selected city.
-
-  // API URLs for current weather and 5-day forecast.
-  const CURRENT_WEATHER_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
-  const FORECAST_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${API_KEY}`;
-
-  loadingSpinner.classList.add("show-loading");
-  
-// This function gets the weather details for a specific city.
-const getWeatherDetails = (cityName, lat, lon, state, country) => {
   // Clear any previous autocomplete suggestions from the UI.
   autocompleteResultsDiv.innerHTML = "";
   // Update the city input field with the selected city and state.
@@ -393,4 +382,4 @@ document.addEventListener("click", (e) => {
   if (!e.target.closest(".search-container")) {
     clearSuggestions();
   }
-})};
+});
