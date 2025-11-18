@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./assets/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles.css">
     <title>Weather Dashboard</title>
   </head>
   <body>
     <h1>Weather Dashboard</h1>
     <div class="container">
       <div class="search-container">
-        <label for="city-input"> <h3>Enter a city name</h3></label>
+        <h3>Enter a city name</h3>
+        <label for="city-input"></label>
         <form>
           <input
             class="city-input"
@@ -18,7 +19,7 @@
             type="text"
             placeholder="ex. Fresno"
             autofocus
-          />
+          >
           <div id="autocomplete-results"></div>
         </form>
       </div>
@@ -26,7 +27,7 @@
         <div class="current-weather"></div>
       </div>
     </div>
-    <div class="loading-spinner"></div> </div>
+    <div class="loading-spinner"></div>
     <div class="days-forecast">
       <h2>Full 5 Day Forecast</h2>
       <ul class="weather-cards"></ul>
